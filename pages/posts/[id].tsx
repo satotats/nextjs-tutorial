@@ -1,19 +1,20 @@
 import Layout from '../../components/layout'
-import { getAllPostIds, getPostData } from '../../lib/posts'
 import Head from 'next/head'
 import Date from '../../components/date'
 import utilStyles from '../../styles/utils.module.css'
 import { GetStaticProps, GetStaticPaths } from 'next'
-import { getArticle, getIds } from '../../lib/microcms'
+import { getArticle, getIds } from '../../api/posts/_id'
+
+export type Article = {
+  title: string
+  date: string
+  contentHtml: string
+}
 
 export default function Post({
   postData
 }: {
-  postData: {
-    title: string
-    date: string
-    contentHtml: string
-  }
+  postData: Article
 }) {
   return (
     <Layout>
@@ -32,7 +33,14 @@ export default function Post({
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const paths = await getIds()
+  let paths;
+
+  try {
+    paths = await getIds();
+  } catch (error) {
+    console.log(error);
+  }
+
   return {
     paths,
     fallback: false
@@ -40,7 +48,14 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const postData = await getArticle(params.id as string)
+  let postData;
+
+  try {
+    postData = await getArticle(params.id as string);
+  } catch (error) {
+    console.log(error);
+  }
+
   return {
     props: {
       postData

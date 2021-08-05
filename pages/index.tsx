@@ -1,20 +1,21 @@
 import Head from 'next/head'
 import Layout, { siteTitle } from '../components/layout'
 import utilStyles from '../styles/utils.module.css'
-import { getSortedPostsData } from '../lib/posts'
 import Link from 'next/link'
 import Date from '../components/date'
 import { GetStaticProps } from 'next'
-import { getIndex } from '../lib/microcms'
+import { getIndex } from '../api'
+
+export type ArticleListItem = {
+  id: number | string;
+  date: string;
+  title: string;
+}
 
 export default function Home({
   allPostsData
 }: {
-  allPostsData: {
-    date: string
-    title: string
-    id: string
-  }[]
+  allPostsData: ArticleListItem[]
 }) {
   return (
     <Layout home>
@@ -51,7 +52,12 @@ export default function Home({
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const allPostsData = await getIndex()
+  let allPostsData: ArticleListItem[];
+  try {
+    allPostsData = await getIndex();
+  } catch (error) {
+    console.log(error);
+  }
   console.log(allPostsData)
   return {
     props: {

@@ -1,48 +1,32 @@
-const URL = process.env.NEXT_PUBLIC_API_URL;
-const KEY = process.env.NEXT_PUBLIC_API_KEY;
+import axios from "axios";
+import { ArticleListItem } from "../pages";
 
-interface Article {
+export const microCMSClient = axios.create({
+    baseURL: process.env.NEXT_PUBLIC_API_URL,
+    headers: {
+        'X-API-KEY': process.env.NEXT_PUBLIC_API_KEY
+    },
+});
+
+export type MicroCMSGetResponseItem<T> = T & {
     id: string;
-    title: string;
-    date: string;
-    contentHtml?: string;
+    createdAt: string;
+    updatedAt: string;
+    publishedAt: string;
+    revisedAt: string;
+};
+
+export interface MicroCMSGetResponse<T> {
+    contents: MicroCMSGetResponseItem<T>[];
+    totalCount: number;
+    offset: number;
+    limit: number;
 }
 
-export async function getIndex() {
-    const postData: Article[] = await fetch(`${URL}?orders=-date&fields=id,title,date`, {
-        headers: {
-            'X-API-KEY': KEY
-        }
-    }).then(res => res.json())
-        .then(res => res.contents);
+// export type MicroCMSParams = {
+//     limit?: number;
+//     offset?: number;
+//     orders?: '-publishedAt' | 'publishedAt'; // 降順：-publishedAt 昇順：publishedA
+//     filters?: string;
+// };
 
-    return postData;
-}
-
-export async function getIds() {
-    const postData = await fetch(`${URL}?fields=id`, {
-        headers: {
-            'X-API-KEY': KEY
-        }
-    }).then(res => res.json())
-        .then(res => res.contents);
-
-    return postData.map(({ id }) => {
-        return {
-            params: {
-                id: id
-            }
-        }
-    })
-}
-
-
-export async function getArticle(id: string) {
-    const postData = await fetch(`${URL}/${id}`, {
-        headers: {
-            'X-API-KEY': KEY
-        }
-    }).then(res => res.json());
-    console.log(postData)
-    return postData;
-}
