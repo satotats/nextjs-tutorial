@@ -58,7 +58,6 @@ export const getStaticProps: GetStaticProps = async () => {
   } catch (error) {
     console.log(error);
   }
-  console.log(allPostsData)
   return {
     props: {
       allPostsData

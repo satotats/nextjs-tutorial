@@ -16,6 +16,7 @@ export default function Post({
 }: {
   postData: Article
 }) {
+
   return (
     <Layout>
       <Head>
@@ -43,22 +44,22 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
   return {
     paths,
-    fallback: false
+    fallback: true
   }
 }
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-  let postData;
+export const getStaticProps: GetStaticProps = async ({ params, previewData }) => {
+  let post: Article;
 
   try {
-    postData = await getArticle(params.id as string);
+    post = await getArticle(params.id as string, previewData as string);
   } catch (error) {
     console.log(error);
-  }
+  } 
 
   return {
     props: {
-      postData
+      postData: post
     }
   }
 }
