@@ -1,6 +1,7 @@
 import Layout from '../../components/layout'
 import Head from 'next/head'
 import Date from '../../components/date'
+import Error from '../../components/error'
 import utilStyles from '../../styles/utils.module.css'
 import { GetStaticProps, GetStaticPaths } from 'next'
 import { getArticle, getIds } from '../../api/posts/_id'
@@ -16,6 +17,9 @@ export default function Post({
 }: {
   postData: Article
 }) {
+  if (!postData) {
+    return <Error></Error>
+  }
 
   return (
     <Layout>
