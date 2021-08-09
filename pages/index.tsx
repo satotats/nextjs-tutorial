@@ -4,7 +4,11 @@ import utilStyles from '../styles/utils.module.css'
 import Link from 'next/link'
 import Date from '../components/date'
 import { GetStaticProps } from 'next'
-import { getIndex } from '../api'
+import { getIndex, getIntroduction } from '../api'
+
+export type Introduction = {
+  contentHtml: string;
+}
 
 export type ArticleListItem = {
   id: number | string;
@@ -13,9 +17,11 @@ export type ArticleListItem = {
 }
 
 export default function Home({
-  allPostsData
+  introduction,
+  allPostsData,
 }: {
-  allPostsData: ArticleListItem[]
+  introduction: Introduction,
+  allPostsData: ArticleListItem[],
 }) {
   return (
     <Layout home>
@@ -23,7 +29,7 @@ export default function Home({
         <title>{siteTitle}</title>
       </Head>
       <section className={utilStyles.headingMd}>
-        <p>ゆるふわの人です</p>
+        <div dangerouslySetInnerHTML={{ __html: introduction.contentHtml }} />
       </section>
       <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
         <h2 className={utilStyles.headingLg}>Blog</h2>
@@ -53,14 +59,18 @@ export default function Home({
 
 export const getStaticProps: GetStaticProps = async () => {
   let allPostsData: ArticleListItem[];
+  let introduction: Introduction;
+
   try {
     allPostsData = await getIndex();
+    introduction = await getIntroduction();
   } catch (error) {
     console.log(error);
   }
   return {
     props: {
-      allPostsData
+      allPostsData,
+      introduction
     }
   }
 }

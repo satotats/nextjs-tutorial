@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  node-dev:
+    image: node:lts
+    container_name: node
+    ports:
+      - "3000:3000"
+    tty: true
+    volumes:
+      - ./:/app
+    working_dir: "/app"
